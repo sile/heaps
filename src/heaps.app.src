@@ -1,0 +1,11 @@
+{application, heaps,
+ [
+  {description, "Various types of heaps written in Erlang"},
+  {vsn, git},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {env, []}
+ ]}.
