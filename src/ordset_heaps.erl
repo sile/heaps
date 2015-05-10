@@ -25,7 +25,7 @@
 
 %% @doc Returns an empty heap
 -spec new() -> heap().
-new() -> ordsets:new().
+new() -> [].
 
 %% @doc Tests if `Heap' is empty and returns `true' if so and `false' otherwise
 -spec is_empty(Heap :: heap()) -> boolean().
@@ -36,7 +36,9 @@ is_empty(_)  -> false.
 %%
 %% Returns the resulting heap
 -spec in(Item, heap(Item)) -> heap().
-in(Item, Heap) -> ordsets:add_element(Item, Heap).
+in(Item, [])                            -> [Item];
+in(Item, Heap = [X | _]) when Item =< X -> [Item | Heap];
+in(Item, [X | Heap])                    -> [X | in(Item, Heap)].
 
 %% @doc Removes the smallest item from the heap `Heap'
 %%
@@ -48,10 +50,8 @@ out([Item | Heap]) -> {{value, Item}, Heap}.
 
 %% @doc Returns the merged heap of `Heap1' and `Heap2'
 -spec merge(Heap1 :: heap(Item1), Heap2 :: heap(Item2)) -> heap(Item1|Item2).
-merge(Heap1, Heap2) -> ordsets:union(Heap1, Heap2).
+merge(Heap1, Heap2) -> lists:merge(Heap1, Heap2).
 
 %% @doc Folds `Function' over every item in `Heap' returing the final value of the accumulator
-%%
-%% NOTE: The iteration order is undefined
 -spec fold(Function :: heaps:fold_fun(Item), AccInitial :: term(), heap(Item)) -> AccResult :: term().
-fold(Fun, Acc, Heap) -> ordsets:fold(Fun, Acc, Heap).
+fold(Fun, Acc, Heap) -> lists:foldl(Fun, Acc, Heap).
