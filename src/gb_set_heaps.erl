@@ -46,7 +46,7 @@ out(Heap = {Set, N, Ref}) ->
     case gb_sets:is_empty(Set) of
         true  -> {empty, Heap};
         false ->
-            {{Item, _, _}, Set2} = gb_sets:take_smallest(Heap),
+            {{Item, _, _}, Set2} = gb_sets:take_smallest(Set),
             {{value, Item}, {Set2, N, Ref}}
     end.
 
