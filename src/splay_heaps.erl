@@ -41,7 +41,7 @@ is_empty(_)   -> false.
 %% @doc Inserts `Item' into the heap `Heap'
 %%
 %% Returns the resulting heap
--spec in(Item, Heap :: heap(Item)) -> heap().
+-spec in(Item, Heap :: heap(Item)) -> heap(Item).
 in(Item, Heap) ->
     splay(leaf(Item), path_to_node(Item, Heap, [])).
 
@@ -52,7 +52,7 @@ in(Item, Heap) ->
 -spec out(Heap :: heap(Item)) -> {{value, Item}, Heap2 :: heap(Item)} | {empty, Heap :: heap(Item)}.
 out(nil)              -> {empty, nil};
 out({Item, nil, Rgt}) -> {{value, Item}, Rgt};
-out(Heap)             -> out(lft(Heap), [{lft,Heap}]).
+out(Heap)             -> out(lft(Heap), [Heap]).
 
 %% @doc Returns the merged heap of `Heap1' and `Heap2'
 -spec merge(Heap1 :: heap(Item1), Heap2 :: heap(Item2)) -> heap(Item1|Item2).
@@ -97,9 +97,14 @@ path_to_node(Item, Node, Path) ->
         I when Item  > I -> path_to_node(Item, rgt(Node), [{rgt,Node}|Path])
     end.
 
--spec out(tree_node(Item), [{direction(), tree_node(Item)}]) -> {{value, Item}, maybe_tree_node(Item)}.
-out({Item, nil, Rgt}, [{lft,Node} | Path]) -> {{value, Item}, splay(lft(Node,Rgt), Path)};
-out(Node,             Path)                -> out(lft(Node), [{lft,Node}|Path]).
+-spec out(tree_node(Item), [tree_node(Item)]) -> {{value, Item}, tree_node(Item)}.
+out({Item, nil, Rgt}, [Node | Path]) -> {{value, Item}, splay_lft(lft(Node,Rgt), Path)};
+out(Node,             Path)          -> out(lft(Node), [Node|Path]).
+
+-spec splay_lft(tree_node(Item), [tree_node(Item)]) -> tree_node(Item).
+splay_lft(X, [])            -> X;
+splay_lft(X, [P])           -> rgt(X, lft(P, rgt(X))); % zig
+splay_lft(X, [P, G | Path]) -> splay_lft(rgt(X, rgt_lft(P, lft(G, rgt(P)), rgt(X))), Path). % zig-zig
 
 -spec splay(tree_node(Item), [{direction(),tree_node(Item)}]) -> tree_node(Item).
 splay(X, []) -> X;
