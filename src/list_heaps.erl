@@ -1,7 +1,7 @@
 %% Copyright (c) 2015, Takeru Ohta <phjgt308@gmail.com>
 %%
-%% @doc Heaps implmented by ordsets module
--module(ordset_heaps).
+%% @doc Heaps implmented by lists module
+-module(list_heaps).
 
 -behaviour(heaps).
 
