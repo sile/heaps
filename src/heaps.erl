@@ -6,20 +6,22 @@
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported API
 %%----------------------------------------------------------------------------------------------------------------------
--export_type([heap/0, elem/0, fold_fun/0]).
+-export_type([heap/0, item/0, fold_fun/0, fold_fun/1]).
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Types
 %%----------------------------------------------------------------------------------------------------------------------
 -type heap() :: term().
--type elem() :: term().
--type fold_fun() :: fun ((elem(), AccIn::term()) -> AccOut::term()).
+-type item() :: term().
+-type fold_fun() :: fold_fun(item()).
+-type fold_fun(Item) :: fun ((Item, AccIn::term()) -> AccOut::term()).
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Callback API
 %%----------------------------------------------------------------------------------------------------------------------
 -callback new() -> heap().
 -callback is_empty(heap()) -> boolean().
--callback in(elem(), heap()) -> heap().
--callback out(heap()) -> {{value, elem()} | empty, heap()}.
+-callback in(item(), heap()) -> heap().
+-callback out(heap()) -> {{value, item()} | empty, heap()}.
+-callback merge(heap(), heap()) -> heap().
 -callback fold(fold_fun(), Initial::term(), heap()) -> Result::term().
