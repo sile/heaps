@@ -8,7 +8,7 @@
 %%----------------------------------------------------------------------------------------------------------------------
 %% Macros
 %%----------------------------------------------------------------------------------------------------------------------
--define(HEAP_MODULES, [leftist_heaps, pairing_heaps, list_heaps, gb_set_heaps, splay_heaps]).
+-define(HEAP_MODULES, [leftist_heaps, pairing_heaps, list_heaps, gb_set_heaps, splay_heaps, binomial_heaps]).
 -define(TEST_FOREACH_MODULE(Title, Fun),
         [begin
              {"["++atom_to_list(__Module__)++"] "++Title, fun () -> Fun(__Module__) end}

@@ -47,7 +47,7 @@ bench_merge(Pairs) ->
 %% Internal Functions
 %%----------------------------------------------------------------------------------------------------------------------
 -spec modules() -> [module()].
-modules() -> [leftist_heaps, pairing_heaps, splay_heaps, gb_set_heaps, list_heaps].
+modules() -> [leftist_heaps, pairing_heaps, splay_heaps, gb_set_heaps, list_heaps, binomial_heaps].
 
 -spec bench_in(module(), [heaps:item()]) -> average_elapsed_time().
 bench_in(Module, Items) ->
