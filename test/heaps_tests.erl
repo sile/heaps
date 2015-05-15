@@ -128,3 +128,42 @@ fold_test_() ->
                H0 = lists:foldl(fun Module:in/2, Module:new(), Items),
                ?assertEqual(length(Items), Module:fold(fun (_, C) -> C + 1 end, 0, H0))
        end).
+
+size_test_() ->
+    ?TEST_FOREACH_MODULE(
+       "Calculates heap size",
+       fun (Module) ->
+               H0 = Module:new(),
+               ?assertEqual(0, heaps:size(Module, H0)),
+
+               H1 = Module:in(1, H0),
+               ?assertEqual(1, heaps:size(Module, H1)),
+
+               H2 = Module:in(2, H1),
+               ?assertEqual(2, heaps:size(Module, H2))
+       end).
+
+to_list_test_() ->
+    ?TEST_FOREACH_MODULE(
+       "Converts to a list",
+       fun (Module) ->
+               H0 = Module:in(1, Module:new()),
+               ?assertEqual([1], heaps:to_list(Module, H0))
+       end).
+
+to_ordlist_test_() ->
+    ?TEST_FOREACH_MODULE(
+       "Converts to an ordered list",
+       fun (Module) ->
+               H0 = Module:in(3, Module:in(10, Module:in(1, Module:new()))),
+               ?assertEqual([1, 3, 10], heaps:to_ordlist(Module, H0))
+       end).
+
+from_list_test_() ->
+    ?TEST_FOREACH_MODULE(
+       "Makes from a list",
+       fun (Module) ->
+               Items = [10, 1, 3],
+               H0 = heaps:from_list(Module, Items),
+               ?assertEqual(lists:sort(Items), heaps:to_ordlist(Module, H0))
+       end).
