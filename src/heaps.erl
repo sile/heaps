@@ -23,5 +23,6 @@
 -callback is_empty(heap()) -> boolean().
 -callback in(item(), heap()) -> heap().
 -callback out(heap()) -> {item(), heap()} | empty.
+-callback peek(heap()) -> {item(), heap()} | empty.
 -callback merge(heap(), heap()) -> heap().
 -callback fold(fold_fun(), Initial::term(), heap()) -> Result::term().

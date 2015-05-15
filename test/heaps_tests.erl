@@ -49,10 +49,7 @@ int_out_test_() ->
        "Inserts an item then removes it",
        fun (Module) ->
                H0 = Module:in(aaa, Module:new()),
-
-               ?assertMatch({aaa, _}, Module:out(H0)),
-               {_, H1} = Module:out(H0),
-
+               ?assignMatch({aaa, H1}, Module:out(H0)),
                ?assert(Module:is_empty(H1))
        end) ++
     ?TEST_FOREACH_MODULE(
@@ -91,6 +88,21 @@ int_out_test_() ->
                      lists:foldl(fun Module:in/2, Module:new(), Items),
                      lists:sort(Items)),
                ?assert(Module:is_empty(ResultHeap))
+       end).
+
+peek_test_() ->
+    ?TEST_FOREACH_MODULE(
+       "Try peeking item from a empty heap",
+       fun (Module) ->
+               H0 = Module:new(),
+               ?assertEqual(empty, Module:peek(H0))
+       end) ++
+    ?TEST_FOREACH_MODULE(
+       "Inserts an item then peeks it",
+       fun (Module) ->
+               H0 = Module:in(aaa, Module:new()),
+               ?assignMatch({aaa, H1}, Module:peek(H0)),
+               ?assert(not Module:is_empty(H1)) % No item is consumed
        end).
 
 merge_test_() ->
