@@ -85,7 +85,7 @@ bench_in_out(Module, Specs) ->
 in_out_all(_, _, [])                     -> ok;
 in_out_all(Module, Heap, [Spec | Specs]) ->
     case Spec of
-        out        -> in_out_all(Module, element(2, Module:out(Heap)), Specs);
+        out        -> in_out_all(Module, case Module:out(Heap) of {_, Heap1} -> Heap1; empty -> Heap end, Specs);
         {in, Item} -> in_out_all(Module, Module:in(Item, Heap), Specs)
     end.
 
@@ -96,7 +96,7 @@ from_list(Module, Items) ->
 -spec out_all(module(), heaps:heap()) ->  ok.
 out_all(Module, Heap) ->
     case Module:out(Heap) of
-        {empty, _} -> ok;
+        empty      -> ok;
         {_, Heap2} -> out_all(Module, Heap2)
     end.
 

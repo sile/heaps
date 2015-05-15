@@ -40,11 +40,11 @@ in(Item, Heap) -> merge({Item, []}, Heap).
 
 %% @doc Removes the smallest item from the heap `Heap'
 %%
-%% Returns the tuple `{{value, Item}, Heap2}', where `Item' is the item removed and `Heap2' is the resulting heap.
-%% If `Heap' is empty, the tuple `{empty, Heap}' is returned.
--spec out(Heap :: heap(Item)) -> {{value, Item}, Heap2 :: heap(Item)} | {empty, Heap :: heap(Item)}.
-out(empty)        -> {empty, empty};
-out({Item, Heap}) -> {{value, Item}, merge_pairs(Heap)}.
+%% Returns the tuple `{Item, Heap2}', where `Item' is the item removed and `Heap2' is the resulting heap.
+%% If `Heap' is empty, the tuple `empty' is returned.
+-spec out(Heap :: heap(Item)) -> {Item, Heap2 :: heap(Item)} | empty.
+out(empty)        -> empty;
+out({Item, Heap}) -> {Item, merge_pairs(Heap)}.
 
 %% @doc Returns the merged heap of `Heap1' and `Heap2'
 -spec merge(Heap1 :: heap(Item1), Heap2 :: heap(Item2)) -> heap(Item1|Item2).

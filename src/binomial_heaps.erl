@@ -42,12 +42,13 @@ in(X, Heap) -> ins_tree({0, X, []}, Heap).
 
 %% @doc Removes the smallest item from the heap `Heap'
 %%
-%% Returns the tuple `{{value, Item}, Heap2}', where `Item' is the item removed and `Heap2' is the resulting heap.
-%% If `Heap' is empty, the tuple `{empty, Heap}' is returned.
-out([])    -> {empty, []};
+%% Returns the tuple `{Item, Heap2}', where `Item' is the item removed and `Heap2' is the resulting heap.
+%% If `Heap' is empty, the tuple `empty' is returned.
+-spec out(Heap :: heap(Item)) -> {Item, Heap2 :: heap(Item)} | empty.
+out([])    -> empty;
 out(Heap0) ->
     {Tree = {_, _, Heap1}, Heap2} = remove_min_tree(Heap0),
-    {{value, root(Tree)}, merge(lists:reverse(Heap1), Heap2)}.
+    {root(Tree), merge(lists:reverse(Heap1), Heap2)}.
 
 %% @doc Returns the merged heap of `Heap1' and `Heap2'
 -spec merge(Heap1 :: heap(Item1), Heap2 :: heap(Item2)) -> heap(Item1|Item2).

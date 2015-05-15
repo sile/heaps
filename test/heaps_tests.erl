@@ -43,14 +43,14 @@ int_out_test_() ->
        "Try removing item from a empty heap",
        fun (Module) ->
                H0 = Module:new(),
-               ?assertEqual({empty, H0}, Module:out(H0))
+               ?assertEqual(empty, Module:out(H0))
        end) ++
     ?TEST_FOREACH_MODULE(
        "Inserts an item then removes it",
        fun (Module) ->
                H0 = Module:in(aaa, Module:new()),
 
-               ?assertMatch({{value, aaa}, _}, Module:out(H0)),
+               ?assertMatch({aaa, _}, Module:out(H0)),
                {_, H1} = Module:out(H0),
 
                ?assert(Module:is_empty(H1))
@@ -62,11 +62,11 @@ int_out_test_() ->
                H0 = lists:foldl(fun Module:in/2, Module:new(), Items),
 
                %% The smaller the item, the earlier it is removed from the heap
-               ?assignMatch({{value,   0}, H1}, Module:out(H0)),
-               ?assignMatch({{value,   1}, H2}, Module:out(H1)),
-               ?assignMatch({{value,   3}, H3}, Module:out(H2)),
-               ?assignMatch({{value, 100}, H4}, Module:out(H3)),
-               ?assertEqual({empty, H4}, Module:out(H4))
+               ?assignMatch({  0, H1}, Module:out(H0)),
+               ?assignMatch({  1, H2}, Module:out(H1)),
+               ?assignMatch({  3, H3}, Module:out(H2)),
+               ?assignMatch({100, H4}, Module:out(H3)),
+               ?assertEqual(empty, Module:out(H4))
        end) ++
     ?TEST_FOREACH_MODULE(
        "Inserts duplicated items",
@@ -74,8 +74,8 @@ int_out_test_() ->
                Items = [aaa, aaa],
                H0 = lists:foldl(fun Module:in/2, Module:new(), Items),
 
-               ?assignMatch({{value, aaa}, H1}, Module:out(H0)),
-               ?assignMatch({{value, aaa}, H2}, Module:out(H1)),
+               ?assignMatch({aaa, H1}, Module:out(H0)),
+               ?assignMatch({aaa, H2}, Module:out(H1)),
                ?assert(Module:is_empty(H2))
        end) ++
     ?TEST_FOREACH_MODULE(
@@ -85,7 +85,7 @@ int_out_test_() ->
                ResultHeap =
                    lists:foldl(
                      fun (ExpectedItem, H0) ->
-                             ?assignMatch({{value, ExpectedItem}, H1}, Module:out(H0)),
+                             ?assignMatch({ExpectedItem, H1}, Module:out(H0)),
                              H1
                      end,
                      lists:foldl(fun Module:in/2, Module:new(), Items),
@@ -100,11 +100,11 @@ merge_test_() ->
                H_A = lists:foldl(fun Module:in/2, Module:new(), [3, 0, 9]),
                H_B = lists:foldl(fun Module:in/2, Module:new(), [0, 7]),
                H0 = Module:merge(H_A, H_B),
-               ?assignMatch({{value, 0}, H1}, Module:out(H0)),
-               ?assignMatch({{value, 0}, H2}, Module:out(H1)),
-               ?assignMatch({{value, 3}, H3}, Module:out(H2)),
-               ?assignMatch({{value, 7}, H4}, Module:out(H3)),
-               ?assignMatch({{value, 9}, H5}, Module:out(H4)),
+               ?assignMatch({0, H1}, Module:out(H0)),
+               ?assignMatch({0, H2}, Module:out(H1)),
+               ?assignMatch({3, H3}, Module:out(H2)),
+               ?assignMatch({7, H4}, Module:out(H3)),
+               ?assignMatch({9, H5}, Module:out(H4)),
                ?assert(Module:is_empty(H5))
        end).
 
