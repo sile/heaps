@@ -8,7 +8,7 @@
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported API
 %%----------------------------------------------------------------------------------------------------------------------
--export([new/0, is_empty/1, in/2, out/1, merge/2, fold/3]).
+-export([new/0, is_empty/1, in/2, out/1, peek/1, merge/2, fold/3]).
 
 -export_type([heap/0, heap/1, item/0]).
 
@@ -42,13 +42,20 @@ in(Item, Heap) ->
 
 %% @doc Removes the smallest item from the heap `Heap'
 %%
-%% Returns the tuple `{{value, Item}, Heap2}', where `Item' is the item removed and `Heap2' is the resulting heap.
-%% If `Heap' is empty, the tuple `{empty, Heap}' is returned.
--spec out(Heap :: heap(Item)) -> {{value, Item}, Heap2 :: heap(Item)} | {empty, Heap :: heap(Item)}.
-out(empty) -> {empty, empty};
-out(Heap0) ->
-    {X, Heap1} = out_impl(Heap0),
-    {{value, X}, Heap1}.
+%% Returns the tuple `{Item, Heap2}', where `Item' is the item removed and `Heap2' is the resulting heap.
+%% If `Heap' is empty, the tuple `empty' is returned.
+-spec out(Heap :: heap(Item)) -> {Item, Heap2 :: heap(Item)} | empty.
+out(empty) -> empty;
+out(Heap0) -> out_impl(Heap0).
+
+%% @doc Returns the tuple `{Item, Heap2}' where `Item' is the front item of `Heap', or `empty' if `Heap' is empty
+%%
+%% `Heap2' may differ from `Heap'
+-spec peek(Heap :: heap(Item)) -> {Item, Heap2 :: heap(Item)} | empty.
+peek(empty) -> empty;
+peek(Heap0) ->
+    {_, X, _} = Heap1 = peek_impl(Heap0),
+    {X, Heap1}.
 
 %% @doc Returns the merged heap of `Heap1' and `Heap2'
 -spec merge(Heap1 :: heap(Item1), Heap2 :: heap(Item2)) -> heap(Item1|Item2).
@@ -71,6 +78,13 @@ out_impl({{empty, X, B}, Y, C}) -> {X, {B, Y, C}};
 out_impl({{    A, X, B}, Y, C}) ->
     {Z, AA} = out_impl(A),
     {Z, {AA, X, {B, Y, C}}}.
+
+-spec peek_impl(heap(Item)) -> heap(Item).
+peek_impl({empty,         Y, C}) -> {empty, Y, C};
+peek_impl({{empty, X, B}, Y, C}) -> {empty, X, {B, Y, C}};
+peek_impl({{    A, X, B}, Y, C}) ->
+    {empty, W, AA} = peek_impl(A),
+    {empty, W, {AA, X, {B, Y, C}}}.
 
 -spec partition(Item, heap(Item)) -> {heap(Item), heap(Item)}.
 partition(_Pivot, empty)                                 -> {empty, empty};

@@ -8,7 +8,7 @@
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported API
 %%----------------------------------------------------------------------------------------------------------------------
--export([new/0, is_empty/1, in/2, out/1, merge/2, fold/3]).
+-export([new/0, is_empty/1, in/2, out/1, peek/1, merge/2, fold/3]).
 
 -export_type([heap/0, heap/1, item/0]).
 
@@ -42,11 +42,18 @@ in(Item, Heap) -> merge({1, Item, empty, empty}, Heap).
 
 %% @doc Removes the smallest item from the heap `Heap'
 %%
-%% Returns the tuple `{{value, Item}, Heap2}', where `Item' is the item removed and `Heap2' is the resulting heap.
-%% If `Heap' is empty, the tuple `{empty, Heap}' is returned.
--spec out(Heap :: heap(Item)) -> {{value, Item}, Heap2 :: heap(Item)} | {empty, Heap :: heap(Item)}.
-out(empty)                   -> {empty, empty};
-out({_, Item, Heap1, Heap2}) -> {{value, Item}, merge(Heap1, Heap2)}.
+%% Returns the tuple `{Item, Heap2}', where `Item' is the item removed and `Heap2' is the resulting heap.
+%% If `Heap' is empty, the tuple `empty' is returned.
+-spec out(Heap :: heap(Item)) -> {Item, Heap2 :: heap(Item)} | empty.
+out(empty)                   -> empty;
+out({_, Item, Heap1, Heap2}) -> {Item, merge(Heap1, Heap2)}.
+
+%% @doc Returns the tuple `{Item, Heap2}' where `Item' is the front item of `Heap', or `empty' if `Heap' is empty
+%%
+%% `Heap2' is always equivalent to `Heap'
+-spec peek(Heap :: heap(Item)) -> {Item, Heap2 :: heap(Item)} | empty.
+peek(empty)                  -> empty;
+peek({_, Item, _, _} = Heap) -> {Item, Heap}.
 
 %% @doc Returns the merged heap of `Heap1' and `Heap2'
 -spec merge(Heap1 :: heap(Item1), Heap2 :: heap(Item2)) -> heap(Item1|Item2).

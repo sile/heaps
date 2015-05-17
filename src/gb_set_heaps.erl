@@ -8,7 +8,7 @@
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported API
 %%----------------------------------------------------------------------------------------------------------------------
--export([new/0, is_empty/1, in/2, out/1, merge/2, fold/3]).
+-export([new/0, is_empty/1, in/2, out/1, peek/1, merge/2, fold/3]).
 
 -export_type([heap/0, heap/1, item/0]).
 
@@ -39,15 +39,25 @@ in(Item, {Set, N, Ref}) -> {gb_sets:add({Item, N, Ref}, Set), N + 1, Ref}.
 
 %% @doc Removes the smallest item from the heap `Heap'
 %%
-%% Returns the tuple `{{value, Item}, Heap2}', where `Item' is the item removed and `Heap2' is the resulting heap.
-%% If `Heap' is empty, the tuple `{empty, Heap}' is returned.
--spec out(Heap :: heap(Item)) -> {{value, Item}, Heap2 :: heap(Item)} | {empty, Heap :: heap(Item)}.
-out(Heap = {Set, N, Ref}) ->
+%% Returns the tuple `{Item, Heap2}', where `Item' is the item removed and `Heap2' is the resulting heap.
+%% If `Heap' is empty, the tuple `empty' is returned.
+-spec out(Heap :: heap(Item)) -> {Item, Heap2 :: heap(Item)} | empty.
+out({Set, N, Ref}) ->
     case gb_sets:is_empty(Set) of
-        true  -> {empty, Heap};
+        true  -> empty;
         false ->
             {{Item, _, _}, Set2} = gb_sets:take_smallest(Set),
-            {{value, Item}, {Set2, N, Ref}}
+            {Item, {Set2, N, Ref}}
+    end.
+
+%% @doc Returns the tuple `{Item, Heap2}' where `Item' is the front item of `Heap', or `empty' if `Heap' is empty
+%%
+%% `Heap2' is always equivalent to `Heap'
+-spec peek(Heap :: heap(Item)) -> {Item, Heap2 :: heap(Item)} | empty.
+peek({Set, _, _} = Heap) ->
+    case gb_sets:is_empty(Set) of
+        true  -> empty;
+        false -> {element(1, gb_sets:smallest(Set)), Heap}
     end.
 
 %% @doc Returns the merged heap of `Heap1' and `Heap2'
