@@ -107,6 +107,6 @@ size(Module, Heap) ->
 -spec times(non_neg_integer(), fun()) -> microseconds().
 times(N, Fun) ->
     Seq = lists:seq(1, N),
-    Start = now(),
+    Start = os:timestamp(),
     ok = lists:foreach(fun (_) -> Fun() end, Seq),
-    timer:now_diff(now(), Start).
+    timer:now_diff(os:timestamp(), Start).
